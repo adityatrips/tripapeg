@@ -111,7 +111,6 @@ const PlaceSlug = () => {
 					))}
 				</Accordion>
 			</ul>
-			<ContactForm tripName={`${data.name} (${data.slug})`} />
 		</div>
 	);
 };
