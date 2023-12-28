@@ -12,26 +12,6 @@ const Navbar = () => {
 				/>
 				<span className="font-bold uppercase text-2xl">trip a peg</span>
 			</div>
-			<div className="flex gap-5">
-				<Link
-					className="hover:text-primary font-bold"
-					to="/"
-				>
-					Home
-				</Link>
-				<Link
-					className="hover:text-primary font-bold"
-					to="/contact"
-				>
-					Contact
-				</Link>
-				<Link
-					className="hover:text-primary font-bold"
-					to="/trips"
-				>
-					Trips
-				</Link>
-			</div>
 		</nav>
 	);
 };
