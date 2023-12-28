@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Card from '../components/Card';
+import { collection, getDocs, limit, query } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const TripsPage = () => {
 	const [data, setData] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 
-	// useSWR(`${process.env.REACT_APP_URL}/get-destinations`, (...args) => {
-	// 	fetch(...args)
-	// 		.then((res) => res.json())
-	// 		.then((json) => {
-	// 			console.log(json);
-	// 			setData(json);
-	// 		})
-	// 		.then(() => setIsLoading(false));
-	// });
+	const getDeals = async () => {
+		const dataRef = collection(db, 'data');
+		const dataSnap = await getDocs(dataRef);
+
+		let tmpData = [];
+
+		dataSnap.forEach((doc) => {
+			tmpData.push(doc.data());
+		});
+
+		setData(tmpData);
+	};
+
+	useEffect(() => {
+		getDeals();
+		setIsLoading(false);
+	}, []);
 
 	if (!isLoading) {
 		return (

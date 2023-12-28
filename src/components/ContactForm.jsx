@@ -1,10 +1,27 @@
+import { addDoc, collection, setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
+import { db } from '../firebase';
+import { DateTime } from 'luxon';
 
 const ContactForm = ({ tripName = '', isInTripPage = true }) => {
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [phone, setPhone] = useState('');
 	const [query, setQuery] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
+
+	const addQuery = async (data) => {
+		setIsLoading(true);
+
+		const dataRef = collection(db, 'queries');
+		await addDoc(dataRef, data);
+		setName('');
+		setEmail('');
+		setPhone('');
+		setQuery('');
+
+		setIsLoading(false);
+	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -14,23 +31,20 @@ const ContactForm = ({ tripName = '', isInTripPage = true }) => {
 			phone,
 			query,
 			tripName,
+			date: DateTime.fromISO(DateTime.now().toISO()).toLocaleString({
+				...DateTime.DATETIME_SHORT_WITH_SECONDS,
+				weekday: 'long',
+			}),
 		};
-		fetch(`${process.env.REACT_APP_URL}/contact`, {
-			method: 'POST',
-			body: JSON.stringify(data),
-		}).then((res) => {
-			if (res.status === 200) {
-				setEmail('');
-				setName('');
-				setPhone('');
-				setQuery('');
-			}
-		});
+
+		addQuery(data);
 	};
 
 	return (
 		<form
-			className="border-2 flex flex-col gap-2 border-secondary p-5 mt-5 rounded"
+			className={`border-2 flex flex-col gap-2 border-secondary p-5 mt-5 rounded ${
+				isLoading ? 'animate-pulse' : ''
+			}`}
 			onSubmit={handleSubmit}
 		>
 			<label>

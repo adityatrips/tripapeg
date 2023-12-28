@@ -102,7 +102,10 @@ const SearchPlaces = ({ dest }) => {
 					<div className="flex flex-wrap">
 						<div className="flex flex-wrap">
 							{tripTypeOpt.map((t) => (
-								<span className="flex w-fit flex-wrap bg-primary m-2 py-1 px-2 rounded-full gap-2">
+								<span
+									key={t}
+									className="flex w-fit flex-wrap bg-primary m-2 py-1 px-2 rounded-full gap-2"
+								>
 									{t}
 									<span
 										onClick={() => {
@@ -139,7 +142,10 @@ const SearchPlaces = ({ dest }) => {
 					/>
 					<div className="flex flex-wrap">
 						{destinationOpt.map((d) => (
-							<span className="flex w-fit flex-wrap bg-primary m-2 py-1 px-2 rounded-full gap-2">
+							<span
+								key={d}
+								className="flex w-fit flex-wrap bg-primary m-2 py-1 px-2 rounded-full gap-2"
+							>
 								{d}
 								<span
 									onClick={() => {
@@ -175,7 +181,10 @@ const SearchPlaces = ({ dest }) => {
 
 					<div className="flex flex-wrap">
 						{activitiesOpt.map((a) => (
-							<span className="flex w-fit flex-wrap bg-primary m-2 py-1 px-2 rounded-full gap-2">
+							<span
+								key={a}
+								className="flex w-fit flex-wrap bg-primary m-2 py-1 px-2 rounded-full gap-2"
+							>
 								{a}
 								<span
 									onClick={() => {

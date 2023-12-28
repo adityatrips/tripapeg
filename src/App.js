@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ContactPage from './pages/ContactPage';
@@ -6,6 +6,7 @@ import TripsPage from './pages/TripsPage';
 import PlacesSlug from './pages/PlaceSlug';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import axios from 'axios';
 
 const App = () => {
 	return (
