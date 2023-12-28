@@ -1,13 +1,95 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.input-style {
+	@apply border-2 border-secondary rounded-lg px-4 py-2 bg-transparent w-full md:flex-grow;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+button {
+	text-transform: uppercase;
+	@apply font-bold;
+}
+
+:root {
+	--text: #e3eaf5;
+	--background: #030609;
+	--primary: #94b0d9;
+	--secondary: #592d7e;
+	--accent: #bd60c6;
+	--linearPrimarySecondary: --linearPrimarySecondary: linear-gradient(#94b0d9, #592d7e);
+	--linearPrimaryAccent: linear-gradient(#94b0d9, #bd60c6);
+	--linearSecondaryAccent: linear-gradient(#592d7e, #bd60c6);
+	--radialPrimarySecondary: radial-gradient(#94b0d9, #592d7e);
+	--radialPrimaryAccent: radial-gradient(#94b0d9, #bd60c6);
+	--radialSecondaryAccent: radial-gradient(#592d7e, #bd60c6);
+}
+
+body {
+	overflow-x: hidden;
+}
+
+.btn {
+	transition: 0.1s ease-in-out;
+	padding: 0.5rem 1rem;
+	font-weight: 900;
+}
+
+.btn-p {
+	&:hover {
+		box-shadow: 0 0 10px var(--primary);
+	}
+
+	background: var(--primary);
+	color: var(--text);
+}
+
+.btn-s {
+	&:hover {
+		box-shadow: 0 0 10px var(--secondary);
+	}
+
+	background: var(--secondary);
+}
+
+.btn-a {
+	&:hover {
+		box-shadow: 0 0 10px var(--accent);
+	}
+
+	color: #000;
+	background: var(--accent);
+}
+
+.accordion {
+	width: 100% !important;
+
+	.accordion-item {
+		list-style: none;
+		border: 1px solid #fff;
+		margin: 1rem;
+		transition: 0.1s box-shadow ease-in-out;
+
+		&:hover {
+			box-shadow: 0 0 20px var(--secondary);
+		}
+
+		&:last-child {
+			margin-bottom: 1rem;
+		}
+
+		.accordion-toggle {
+			cursor: pointer;
+			padding: 1rem;
+
+			&:h3 {
+				margin: 0;
+			}
+		}
+
+		.accordion-content {
+			border-top: 1px solid white;
+			padding: 1em;
+		}
+	}
 }
