@@ -25,6 +25,7 @@
 	"scripts": {
 		"start": "react-scripts start",
 		"build": "CI=false && react-scripts build",
+		"build_local": "ereact-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject"
 	},
