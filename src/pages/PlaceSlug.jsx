@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ImageUploader from 'react-image-upload';
+import 'react-image-upload/dist/index.css';
 import {
 	Navigate,
 	RedirectFunction,
@@ -23,13 +24,14 @@ import slugify from 'slugify';
 import { useParams } from 'react-router-dom';
 import { MdClose, MdUploadFile } from 'react-icons/md';
 
-const PlaceSlug = () => {
-	const { id } = useParams();
-	const [data, setData] = useState({});
+let PlaceSlug = () => {
+	let { id } = useParams();
+	let [data, setData] = useState({});
+	let [loading, setLoading] = useState(true);
 
-	const getData = async () => {
-		const d = query(collection(db, 'data'), where('slug', '==', id));
-		const dSnap = await getDocs(d);
+	let getData = async () => {
+		let d = query(collection(db, 'data'), where('slug', '==', id));
+		let dSnap = await getDocs(d);
 		setData(dSnap.docs[0].data());
 		setImgUrl(dSnap.docs[0].data().src);
 		setName(dSnap.docs[0].data().name);
@@ -41,7 +43,7 @@ const PlaceSlug = () => {
 		for (let [k, v] of Object.entries(dSnap.docs[0].data().available)) {
 			if (v == true) {
 				setMonths((prev) => {
-					return String(prev + ',' + k);
+					return String(prev + ';' + k);
 				});
 			}
 		}
@@ -49,55 +51,61 @@ const PlaceSlug = () => {
 		setExclusions(dSnap.docs[0].data().exclusions.join(';'));
 		setHotels(dSnap.docs[0].data().hotels.join(';'));
 		setImgUrl(dSnap.docs[0].data().src);
-		setAllDays(
-			dSnap.docs[0].data().days.length == 0
-				? []
-				: dSnap.docs[0].data().days
-		);
+		setAllDays(dSnap.docs[0].data().days);
 	};
 
-	const [cards, setCards] = useState([]);
 	let navigate = useNavigate();
-	const [imgFile, setImgFile] = useState('');
-	const [imgName, setImgName] = useState('');
-	const [imgUrl, setImgUrl] = useState('');
-	const [name, setName] = useState('');
-	const [duration, setDuration] = useState('');
-	const [price, setPrice] = useState('');
-	const [days, setDays] = useState([]);
-	const [tags, setTags] = useState('');
-	const [activities, setActivities] = useState('');
-	const [months, setMonths] = useState('');
-	const [inclusions, setInclusions] = useState('');
-	const [exclusions, setExclusions] = useState('');
-	const [hotels, setHotels] = useState('');
-	const [allDays, setAllDays] = useState([]);
+	let [imgFile, setImgFile] = useState('');
+	let [imgName, setImgName] = useState('');
+	let [imgUrl, setImgUrl] = useState('');
+	let [name, setName] = useState('');
+	let [duration, setDuration] = useState('');
+	let [price, setPrice] = useState('');
+	let [days, setDays] = useState([]);
+	let [tags, setTags] = useState('');
+	let [activities, setActivities] = useState('');
+	let [months, setMonths] = useState('');
+	let [inclusions, setInclusions] = useState('');
+	let [exclusions, setExclusions] = useState('');
+	let [hotels, setHotels] = useState('');
+	let [allDays, setAllDays] = useState([]);
+
+	let [newDayNumber, setNewDayNumber] = useState('');
+	let [newDayTitle, setNewDayTitle] = useState('');
+	let [newDayDescription, setNewDayDescription] = useState('');
+
+	let [dayNumber, setDayNumber] = useState('');
+	let [dayTitle, setDayTitle] = useState('');
+	let [dayDescription, setDayDescription] = useState('');
 
 	useEffect(() => {
 		getData();
-	}, [cards]);
+		setLoading(false);
+		console.log(data);
+	}, []);
 
-	const handleSubmit = async (e) => {
+	let handleSubmit = async (e) => {
 		e.preventDefault();
-
-		const ref = collection(db, 'data');
-		const doc = await getDocs(query(ref, where('slug', '==', id)));
-
-		uploadBytes(
-			REF(
-				storage,
-				`images/${slugify(imgName, { lower: true }).toString()}`
-			),
-			imgFile,
-			''
-		).then((snapshot) => {
-			getDownloadURL(snapshot.ref).then((url) => {
-				setImgUrl(url.toString());
-			});
-		});
-
 		try {
-			const snap = await updateDoc(doc.docs[0].ref, {
+			let ref = collection(db, 'data');
+			let doc = await getDocs(query(ref, where('slug', '==', id)));
+			let fileName = `${name}.${imgName.split('.')[1]}`;
+
+			uploadBytes(
+				REF(
+					storage,
+					`images/${slugify(name + '.' + fileName.split('.')[1], {
+						lower: true,
+					})}`
+				),
+				imgFile
+			).then((snapshot) => {
+				getDownloadURL(snapshot.ref).then((url) => {
+					setImgUrl(url);
+				});
+			});
+
+			let snap = await updateDoc(doc.docs[0].ref, {
 				activities: activities.split(';'),
 				available: {
 					jan: months.includes('jan'),
@@ -122,9 +130,9 @@ const PlaceSlug = () => {
 				name: name,
 				price: parseInt(price),
 				tags: tags.split(';'),
-				src: imgUrl,
+				src: imgUrl.toString(),
 			});
-			navigate('/edit-trips');
+			alert('Trip updated successfully!');
 		} catch (err) {
 			alert(err.message + '\nContact us at: tripapeg@gmail.com');
 		}
@@ -146,6 +154,9 @@ const PlaceSlug = () => {
 					onFileAdded={(picture) => {
 						setImgFile(picture.file);
 						setImgName(picture.file.name);
+
+						console.log(imgFile);
+						console.log(imgName);
 					}}
 					style={{
 						height: 'auto',
@@ -227,56 +238,96 @@ const PlaceSlug = () => {
 				/>
 				<small className="font-bold text-center">
 					Available months (case-sensitive):&nbsp;
-					<span className="text-red-300">jan</span>,&nbsp;
-					<span className="text-red-300">feb</span>,&nbsp;
-					<span className="text-red-300">mar</span>,&nbsp;
-					<span className="text-red-300">apr</span>,&nbsp;
-					<span className="text-red-300">may</span>,&nbsp;
-					<span className="text-red-300">jun</span>,&nbsp;
-					<span className="text-red-300">jul</span>,&nbsp;
-					<span className="text-red-300">aug</span>,
-					<span className="text-red-300">sep</span>,&nbsp;
-					<span className="text-red-300">oct</span>,&nbsp;
-					<span className="text-red-300">nov</span>,&nbsp;
-					<span className="text-red-300">dec</span>,
+					<span className="text-red-300">jan</span>;&nbsp;
+					<span className="text-red-300">feb</span>;&nbsp;
+					<span className="text-red-300">mar</span>;&nbsp;
+					<span className="text-red-300">apr</span>;&nbsp;
+					<span className="text-red-300">may</span>;&nbsp;
+					<span className="text-red-300">jun</span>;&nbsp;
+					<span className="text-red-300">jul</span>;&nbsp;
+					<span className="text-red-300">aug</span>;
+					<span className="text-red-300">sep</span>;&nbsp;
+					<span className="text-red-300">oct</span>;&nbsp;
+					<span className="text-red-300">nov</span>;&nbsp;
+					<span className="text-red-300">dec</span>
 				</small>
-				<div className="grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-					{allDays.length !== 0 &&
-						allDays.map((day, index) => {
-							return (
-								<Card
-									slug={data.slug}
-									dayNumber={day.day}
-									dayTitle={day.title}
-									dayDescription={day.desc}
-									index={index}
-								/>
-							);
-						})}
+				<div>
+					<div className="flex flex-col gap-2">
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+							{allDays.map((day, index) => {
+								let { dayNumber, dayTitle, dayDescription } =
+									day;
+								return (
+									<div
+										key={index}
+										className="border-2 border-secondary p-2 rounded-lg"
+									>
+										<h1 className="text-2xl text-center font-bold uppercase">
+											Day {dayNumber}
+										</h1>
+										<p className="font-bold text-xl text-center">
+											{dayTitle}
+										</p>
+										<p className="text-justify break-words mb-5">
+											{dayDescription}
+										</p>
+										<a
+											onClick={() =>
+												setAllDays(
+													allDays.filter(
+														(item) =>
+															item.dayNumber !==
+															dayNumber
+													)
+												)
+											}
+											className="rounded-lg px-4 py-1 md:py-2 bg-secondary w-full font-bold uppercase text-center cursor-pointer"
+										>
+											Remove
+										</a>
+									</div>
+								);
+							})}
+						</div>
+					</div>
+					<div className="flex flex-col gap-2">
+						<input
+							value={dayNumber}
+							onChange={(e) => setDayNumber(e.target.value)}
+							type="text"
+							className="input-style w-full"
+							placeholder="Day number"
+						/>
+						<input
+							value={dayTitle}
+							onChange={(e) => setDayTitle(e.target.value)}
+							type="text"
+							className="input-style w-full"
+							placeholder="Day title"
+						/>
+						<input
+							value={dayDescription}
+							onChange={(e) => setDayDescription(e.target.value)}
+							type="text"
+							className="input-style w-full"
+							placeholder="Day description"
+						/>
+						<a
+							onClick={() => {
+								setAllDays((prev) => [
+									...prev,
+									{ dayNumber, dayTitle, dayDescription },
+								]);
+								setDayNumber('');
+								setDayTitle('');
+								setDayDescription('');
+							}}
+							className="rounded-lg px-4 py-1 md:py-2 bg-secondary cursor-pointer text-center font-bold uppercase w-full mb-1"
+						>
+							Add Day
+						</a>
+					</div>
 				</div>
-				<a
-					className="text-center text-text bg-secondary px-4 py-2 rounded-lg font-bold my-2 cursor-pointer uppercase"
-					onClick={() => {
-						const doc = collection(db, 'data');
-						const docSnap = getDocs(
-							query(doc, where('slug', '==', id))
-						);
-						docSnap.then((d) => {
-							d.docs.forEach(async (d) => {
-								await updateDoc(d.ref, {
-									days: arrayUnion({
-										day: allDays.length + 1,
-										title: '',
-										desc: '',
-									}),
-								});
-								window.location.reload();
-							});
-						});
-					}}
-				>
-					Add day
-				</a>
 				<textarea
 					value={inclusions}
 					onChange={(e) => setInclusions(e.target.value)}
@@ -309,101 +360,5 @@ const PlaceSlug = () => {
 		</form>
 	);
 };
-
-function Card({ slug, allDays, dayNumber, dayTitle, dayDescription, index }) {
-	const [newDayTitle, setNewDayTitle] = useState(dayTitle);
-	const [newDayDescription, setNewDayDescription] = useState(dayDescription);
-	const [newDayNumber, setNewDayNumber] = useState(dayNumber);
-
-	const updateDay = async () => {
-		const docRef = collection(db, 'data');
-		const docSnap = await getDocs(query(docRef, where('slug', '==', slug)));
-
-		try {
-			docSnap.docs.forEach(async (d) => {
-				await updateDoc(d.ref, {
-					days: arrayUnion({
-						day: newDayNumber,
-						title: newDayTitle,
-						desc: newDayDescription,
-					}),
-				});
-				await updateDoc(d.ref, {
-					days: arrayRemove({
-						day: dayNumber,
-						title: dayTitle,
-						desc: dayDescription,
-					}),
-				});
-			});
-
-			alert('Day updated successfully!');
-		} catch (err) {
-			alert(err.message);
-		}
-	};
-
-	const removeDay = async () => {
-		const doc = await getDocs(collection(db, 'data'));
-
-		try {
-			doc.docs.forEach(async (d) => {
-				await updateDoc(d.ref, {
-					days: arrayRemove({
-						day: dayNumber,
-						title: dayTitle,
-						desc: dayDescription,
-					}),
-				});
-			});
-
-			alert('Day removed successfully! Will reload in 1 second', {
-				autoClose: 1000,
-			});
-
-			setTimeout(() => window.location.reload(), 1000);
-		} catch (err) {
-			alert(err.message);
-		}
-	};
-
-	return (
-		<div className="border-2 border-secondary p-2 rounded-lg">
-			<h1 className="text-2xl text-center font-bold uppercase mb-2">
-				Day{' '}
-				<input
-					className="font-bold text-xl bg-background border-2 border-secondary rounded-lg p-2 w-fit"
-					value={newDayNumber}
-					onChange={(e) => setNewDayNumber(e.target.value)}
-				/>
-			</h1>
-			<input
-				onChange={(e) => setNewDayTitle(e.target.value)}
-				className="font-bold text-xl bg-background w-full mb-2 border-2 border-secondary rounded-lg p-2"
-				value={newDayTitle}
-			/>
-			<textarea
-				onChange={(e) => setNewDayDescription(e.target.value)}
-				className="bg-background w-full mb-2 border-2 border-secondary rounded-lg p-2"
-				value={newDayDescription}
-				rows={10}
-			></textarea>
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-				<a
-					className="rounded-lg px-4 py-1 md:py-2 bg-secondary w-full mt-5 cursor-pointer text-center uppercase font-bold"
-					onClick={updateDay}
-				>
-					Update Day
-				</a>
-				<a
-					className="rounded-lg px-4 py-1 md:py-2 bg-secondary w-full mt-5 cursor-pointer text-center uppercase font-bold"
-					onClick={removeDay}
-				>
-					Remove Day
-				</a>
-			</div>
-		</div>
-	);
-}
 
 export default PlaceSlug;
