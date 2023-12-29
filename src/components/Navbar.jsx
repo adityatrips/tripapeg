@@ -10,7 +10,27 @@ const Navbar = () => {
 					height={90}
 					className="hidden md:block"
 				/>
-				<span className="font-bold uppercase text-2xl">trip a peg</span>
+				<Link
+					to="/"
+					className="font-bold uppercase text-2xl"
+				>
+					trip a peg
+				</Link>
+			</div>
+
+			<div className="links flex flex-col md:flex-row gap-5">
+				<Link
+					to="/"
+					className="text-lg font-semibold"
+				>
+					Home
+				</Link>
+				<Link
+					to="/edit-trips"
+					className="text-lg font-semibold"
+				>
+					Edit
+				</Link>
 			</div>
 		</nav>
 	);

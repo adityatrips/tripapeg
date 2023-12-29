@@ -10,6 +10,9 @@ button {
 	text-transform: uppercase;
 	@apply font-bold;
 }
+.uploader__file {
+	margin: 0 auto !important;
+}
 
 :root {
 	--text: #e3eaf5;

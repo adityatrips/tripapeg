@@ -3,6 +3,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import EditTrips from './pages/EditTrips';
+import { collection, getDoc, getDocs } from 'firebase/firestore';
+import { db } from './firebase';
+import PlaceSlug from './pages/PlaceSlug';
 
 const App = () => {
 	return (
@@ -13,6 +17,14 @@ const App = () => {
 					<Route
 						path="/"
 						element={<HomePage />}
+					/>
+					<Route
+						path="/edit-trips"
+						element={<EditTrips />}
+					/>
+					<Route
+						path="/place/:id"
+						element={<PlaceSlug />}
 					/>
 				</Routes>
 			</div>

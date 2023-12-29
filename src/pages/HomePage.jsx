@@ -3,12 +3,7 @@ import ReactImageUploading from 'react-images-uploading';
 import { db, storage } from './../firebase';
 import { collection, addDoc, setDoc, doc } from 'firebase/firestore';
 import slugify from 'slugify';
-import {
-	getDownloadURL,
-	ref,
-	uploadBytes,
-	uploadString,
-} from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import ImageUploader from 'react-images-upload';
 import 'react-image-upload/dist/index.css';
@@ -45,10 +40,6 @@ const HomePage = () => {
 		'Adventure sports',
 	]);
 	const [images, setImages] = useState([]);
-
-	const onChange = (imageList, addUpdateIndex) => {
-		setImages(imageList);
-	};
 
 	const [cards, setCards] = useState([]);
 
@@ -215,21 +206,21 @@ const HomePage = () => {
 					onChange={(e) => setTags(e.target.value)}
 					type="text"
 					className="input-style w-full"
-					placeholder="Tags for the trip (separate by a comma)"
+					placeholder="Tags for the trip (separate by a semicolol (;))"
 				/>
 				<input
 					value={activities}
 					onChange={(e) => setActivities(e.target.value)}
 					type="text"
 					className="input-style w-full"
-					placeholder="Activities during the trip (separate by a comma)"
+					placeholder="Activities during the trip (separate by a semicolol (;))"
 				/>
 				<input
 					value={months}
 					onChange={(e) => setMonths(e.target.value)}
 					type="text"
 					className="input-style w-full"
-					placeholder='Trip available in "month" (separate by a comma)'
+					placeholder='Trip available in "month" (separate by a semicolol (;))'
 				/>
 				<small className="font-bold text-center">
 					Available months (case-sensitive):&nbsp;
@@ -320,21 +311,21 @@ const HomePage = () => {
 					value={inclusions}
 					onChange={(e) => setInclusions(e.target.value)}
 					className="input-style w-full"
-					placeholder="Inclusions of the trip (separate by a comma)"
+					placeholder="Inclusions of the trip (separate by a semicolol (;))"
 					rows={5}
 				></textarea>
 				<textarea
 					value={exclusions}
 					onChange={(e) => setExclusions(e.target.value)}
 					className="input-style w-full"
-					placeholder="Exclusions of the trip (separate by a comma)"
+					placeholder="Exclusions of the trip (separate by a semicolol (;))"
 					rows={5}
 				></textarea>
 				<textarea
 					value={hotels}
 					onChange={(e) => setHotels(e.target.value)}
 					className="input-style w-full"
-					placeholder="Hotels of the trip (separate by a comma)"
+					placeholder="Hotels of the trip (separate by a semicolol (;))"
 					rows={5}
 				></textarea>
 			</div>
