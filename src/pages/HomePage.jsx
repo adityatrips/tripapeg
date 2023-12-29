@@ -10,6 +10,7 @@ import {
 	getDocs,
 	limit,
 	query,
+	where,
 } from 'firebase/firestore';
 import { db } from './../firebase';
 
@@ -34,7 +35,13 @@ const HomePage = () => {
 
 	const getDeals = async () => {
 		const dataRef = collection(db, 'data');
-		const dataSnap = await getDocs(query(dataRef, limit(4)));
+		const dataSnap = await getDocs(
+			query(dataRef, where('tags', 'array-contains', 'featured'))
+		);
+
+		dataSnap.forEach((doc) => {
+			console.log(doc.data());
+		});
 
 		let tmpData = [];
 
@@ -89,7 +96,7 @@ const HomePage = () => {
 					Crusie Deals
 				</h1>
 				<div className="grid gap-5 grid-cols-1 md:grid-cols-2">
-					{cruiseData.map((deal) => (
+					{cruiseData.map((deal, index) => (
 						<Card
 							desc={deal.desc}
 							price={deal.price}
@@ -97,7 +104,7 @@ const HomePage = () => {
 							duration={deal.duration}
 							name={deal.name}
 							// slug={''}
-							key={deal.name}
+							key={index}
 						/>
 					))}
 				</div>
@@ -107,14 +114,14 @@ const HomePage = () => {
 					Popular Deals
 				</h1>
 				<div className="grid grid-cols-1 gap-5 md:grid-cols-2  lg:grid-cols-4">
-					{dealsData.map((deal) => (
+					{dealsData.map((deal, index) => (
 						<Card
 							desc={deal.desc}
 							price={deal.price}
 							src={deal.src}
 							duration={deal.duration}
 							name={deal.name}
-							key={deal.name}
+							key={index}
 							slug={deal.slug}
 						/>
 					))}
