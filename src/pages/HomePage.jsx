@@ -14,16 +14,12 @@ import {
 import { db } from './../firebase';
 
 const HomePage = () => {
-	const [cruiseDeals, setCruiseDeals] = useState([]);
-	const [popularDeals, setPopularDeals] = useState([]);
 	const [dests, setDests] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [cruiseData, setCruiseData] = useState([]);
 	const [dealsData, setDealsData] = useState([]);
 
 	const getCruiseDeals = async () => {
-		const cruiseRef = collection(db, 'cruise');
-
 		const dataRef = collection(db, 'cruise');
 		const dataSnap = await getDocs(dataRef);
 
