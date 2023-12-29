@@ -18,7 +18,7 @@ const Navbar = () => {
 				</Link>
 			</div>
 
-			<div className="links flex flex-col md:flex-row gap-5">
+			<div className="links flex flex-row justify-center items-center md:flex-row gap-5">
 				<Link
 					to="/"
 					className="text-lg font-semibold"

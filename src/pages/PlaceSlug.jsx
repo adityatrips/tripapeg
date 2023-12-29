@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import ImageUploader from 'react-image-upload';
 import {
+	Navigate,
+	RedirectFunction,
+	useNavigate,
+	useNavigation,
+} from 'react-router-dom';
+import {
+	addDoc,
 	arrayRemove,
 	arrayUnion,
 	collection,
@@ -24,7 +31,7 @@ const PlaceSlug = () => {
 		const d = query(collection(db, 'data'), where('slug', '==', id));
 		const dSnap = await getDocs(d);
 		setData(dSnap.docs[0].data());
-
+		setImgUrl(dSnap.docs[0].data().src);
 		setName(dSnap.docs[0].data().name);
 		setDuration(dSnap.docs[0].data().duration);
 		setPrice(dSnap.docs[0].data().price);
@@ -50,7 +57,7 @@ const PlaceSlug = () => {
 	};
 
 	const [cards, setCards] = useState([]);
-
+	let navigate = useNavigate();
 	const [imgFile, setImgFile] = useState('');
 	const [imgName, setImgName] = useState('');
 	const [imgUrl, setImgUrl] = useState('');
@@ -117,6 +124,7 @@ const PlaceSlug = () => {
 				tags: tags.split(';'),
 				src: imgUrl,
 			});
+			navigate('/edit-trips');
 		} catch (err) {
 			alert(err.message + '\nContact us at: tripapeg@gmail.com');
 		}
@@ -233,16 +241,7 @@ const PlaceSlug = () => {
 					<span className="text-red-300">dec</span>,
 				</small>
 				<div className="grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-					{allDays.length == 0 || !allDays ? (
-						<Card
-							allDays={allDays}
-							slug={data.slug}
-							dayNumber={'1'}
-							dayTitle={''}
-							dayDescription={''}
-							index={0}
-						/>
-					) : (
+					{allDays.length !== 0 &&
 						allDays.map((day, index) => {
 							return (
 								<Card
@@ -253,21 +252,26 @@ const PlaceSlug = () => {
 									index={index}
 								/>
 							);
-						})
-					)}
+						})}
 				</div>
 				<a
 					className="text-center text-text bg-secondary px-4 py-2 rounded-lg font-bold my-2 cursor-pointer uppercase"
 					onClick={() => {
-						setAllDays((prev) => {
-							return [
-								...prev,
-								{
-									day: prev.length + 1,
-									title: '',
-									desc: '',
-								},
-							];
+						const doc = collection(db, 'data');
+						const docSnap = getDocs(
+							query(doc, where('slug', '==', id))
+						);
+						docSnap.then((d) => {
+							d.docs.forEach(async (d) => {
+								await updateDoc(d.ref, {
+									days: arrayUnion({
+										day: allDays.length + 1,
+										title: '',
+										desc: '',
+									}),
+								});
+								window.location.reload();
+							});
 						});
 					}}
 				>
@@ -315,35 +319,52 @@ function Card({ slug, allDays, dayNumber, dayTitle, dayDescription, index }) {
 		const docRef = collection(db, 'data');
 		const docSnap = await getDocs(query(docRef, where('slug', '==', slug)));
 
-		const doc = docSnap.docs[0].ref;
+		try {
+			docSnap.docs.forEach(async (d) => {
+				await updateDoc(d.ref, {
+					days: arrayUnion({
+						day: newDayNumber,
+						title: newDayTitle,
+						desc: newDayDescription,
+					}),
+				});
+				await updateDoc(d.ref, {
+					days: arrayRemove({
+						day: dayNumber,
+						title: dayTitle,
+						desc: dayDescription,
+					}),
+				});
+			});
 
-		await setDoc(doc, {
-			days: allDays,
-		});
+			alert('Day updated successfully!');
+		} catch (err) {
+			alert(err.message);
+		}
 	};
 
 	const removeDay = async () => {
-		const docRef = collection(db, 'data');
-		const docSnap = await getDocs(query(docRef, where('slug', '==', slug)));
+		const doc = await getDocs(collection(db, 'data'));
 
-		const doc = await getDocs(
-			query(docSnap.docs[0].ref),
-			where('activities.day', '==', `${dayNumber}`)
-		);
+		try {
+			doc.docs.forEach(async (d) => {
+				await updateDoc(d.ref, {
+					days: arrayRemove({
+						day: dayNumber,
+						title: dayTitle,
+						desc: dayDescription,
+					}),
+				});
+			});
 
-		await updateDoc(
-			doc,
-			{
-				days: arrayRemove({
-					day: dayNumber,
-					title: dayTitle,
-					desc: dayDescription,
-				}),
-			},
-			{ merge: true }
-		);
+			alert('Day removed successfully! Will reload in 1 second', {
+				autoClose: 1000,
+			});
 
-		window.location.reload();
+			setTimeout(() => window.location.reload(), 1000);
+		} catch (err) {
+			alert(err.message);
+		}
 	};
 
 	return (
