@@ -23,16 +23,15 @@ import { db, storage } from '../firebase';
 import slugify from 'slugify';
 import { useParams } from 'react-router-dom';
 import { MdClose, MdUploadFile } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 let PlaceSlug = () => {
 	let { id } = useParams();
-	let [data, setData] = useState({});
-	let [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(true);
 
 	let getData = async () => {
 		let d = query(collection(db, 'data'), where('slug', '==', id));
 		let dSnap = await getDocs(d);
-		setData(dSnap.docs[0].data());
 		setImgUrl(dSnap.docs[0].data().src);
 		setName(dSnap.docs[0].data().name);
 		setDuration(dSnap.docs[0].data().duration);
@@ -54,9 +53,6 @@ let PlaceSlug = () => {
 		setAllDays(dSnap.docs[0].data().days);
 	};
 
-	let navigate = useNavigate();
-	let [imgFile, setImgFile] = useState('');
-	let [imgName, setImgName] = useState('');
 	let [imgUrl, setImgUrl] = useState('');
 	let [name, setName] = useState('');
 	let [duration, setDuration] = useState('');
@@ -70,10 +66,6 @@ let PlaceSlug = () => {
 	let [hotels, setHotels] = useState('');
 	let [allDays, setAllDays] = useState([]);
 
-	let [newDayNumber, setNewDayNumber] = useState('');
-	let [newDayTitle, setNewDayTitle] = useState('');
-	let [newDayDescription, setNewDayDescription] = useState('');
-
 	let [dayNumber, setDayNumber] = useState('');
 	let [dayTitle, setDayTitle] = useState('');
 	let [dayDescription, setDayDescription] = useState('');
@@ -81,7 +73,6 @@ let PlaceSlug = () => {
 	useEffect(() => {
 		getData();
 		setLoading(false);
-		console.log(data);
 	}, []);
 
 	let handleSubmit = async (e) => {
@@ -89,23 +80,7 @@ let PlaceSlug = () => {
 		try {
 			let ref = collection(db, 'data');
 			let doc = await getDocs(query(ref, where('slug', '==', id)));
-			let fileName = `${name}.${imgName.split('.')[1]}`;
-
-			uploadBytes(
-				REF(
-					storage,
-					`images/${slugify(name + '.' + fileName.split('.')[1], {
-						lower: true,
-					})}`
-				),
-				imgFile
-			).then((snapshot) => {
-				getDownloadURL(snapshot.ref).then((url) => {
-					setImgUrl(url);
-				});
-			});
-
-			let snap = await updateDoc(doc.docs[0].ref, {
+			await updateDoc(doc.docs[0].ref, {
 				activities: activities.split(';'),
 				available: {
 					jan: months.includes('jan'),
@@ -130,14 +105,22 @@ let PlaceSlug = () => {
 				name: name,
 				price: parseInt(price),
 				tags: tags.split(';'),
-				src: imgUrl.toString(),
+				src: imgUrl,
 			});
-			alert('Trip updated successfully!');
+
+			toast.success('Trip updated successfully!');
 		} catch (err) {
-			alert(err.message + '\nContact us at: tripapeg@gmail.com');
+			toast.error(err.message + '\nContact us at: tripapeg@gmail.com');
 		}
 	};
 
+	if (loading) {
+		return (
+			<div className="flex justify-center items-center h-screen">
+				<div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
+			</div>
+		);
+	}
 	return (
 		<form
 			onSubmit={handleSubmit}
@@ -151,12 +134,35 @@ let PlaceSlug = () => {
 				/>
 
 				<ImageUploader
+					onFileRemoved={() => {
+						toast.success('Picture removed successfully!');
+					}}
 					onFileAdded={(picture) => {
-						setImgFile(picture.file);
-						setImgName(picture.file.name);
-
-						console.log(imgFile);
-						console.log(imgName);
+						uploadBytes(
+							REF(
+								storage,
+								`images/${slugify(
+									name +
+										'.' +
+										picture.file.name.split('.')[1],
+									{
+										lower: true,
+									}
+								)}`
+							),
+							picture.file
+						)
+							.then((snapshot) => {
+								return getDownloadURL(snapshot.ref);
+							})
+							.then((url) => {
+								setImgUrl(url);
+							});
+						if (!imgUrl) {
+							toast.error('Please upload the picture again!');
+						} else {
+							toast.success('Picture uploaded successfully!');
+						}
 					}}
 					style={{
 						height: 'auto',

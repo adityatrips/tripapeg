@@ -4,14 +4,26 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import EditTrips from './pages/EditTrips';
-import { collection, getDoc, getDocs } from 'firebase/firestore';
-import { db } from './firebase';
 import PlaceSlug from './pages/PlaceSlug';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
 	return (
 		<BrowserRouter>
 			<Navbar />
+			<ToastContainer
+				position="top-right"
+				autoClose={2500}
+				hideProgressBar={false}
+				newestOnTop
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss={false}
+				draggable
+				pauseOnHover={false}
+				theme="dark"
+			/>
 			<div className="px-5">
 				<Routes>
 					<Route

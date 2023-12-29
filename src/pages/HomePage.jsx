@@ -16,6 +16,7 @@ import { MdUploadFile, MdClose } from 'react-icons/md';
 
 import ImageUploader from 'react-image-upload';
 import 'react-image-upload/dist/index.css';
+import { toast } from 'react-toastify';
 
 const HomePage = () => {
 	const [name, setName] = useState('');
@@ -87,7 +88,19 @@ const HomePage = () => {
 				name: name,
 				price: parseInt(price),
 				slug: slugify(name, { lower: true }).toString(),
-				src: imgUrl,
+				src: uploadBytes(
+					ref(
+						storage,
+						`images/${slugify(name + '.' + fileName.split('.')[1], {
+							lower: true,
+						})}`
+					),
+					imgFile
+				).then((snapshot) => {
+					getDownloadURL(snapshot.ref).then((url) => {
+						return url.toString();
+					});
+				}),
 				tags: tags.split(';'),
 			};
 
@@ -95,52 +108,9 @@ const HomePage = () => {
 
 			await setDoc(docRef, data, { merge: true });
 
-			console.log('Document written with ID: ', name);
+			toast.success('Document written with ID: ', name);
 		} catch (error) {
-			console.error(error.message);
-		}
-	};
-
-	const updateDay = async () => {
-		try {
-			const docRef = collection(db, 'data');
-			const snapshot = await getDocs(
-				query(docRef, where('name', '==', name))
-			);
-			let data = {
-				activities: activities.split(';'),
-				available: {
-					jan: months.includes('jan') ? true : false,
-					feb: months.includes('feb') ? true : false,
-					mar: months.includes('mar') ? true : false,
-					apr: months.includes('apr') ? true : false,
-					may: months.includes('may') ? true : false,
-					jun: months.includes('jun') ? true : false,
-					jul: months.includes('jul') ? true : false,
-					aug: months.includes('aug') ? true : false,
-					sep: months.includes('sep') ? true : false,
-					oct: months.includes('oct') ? true : false,
-					nov: months.includes('nov') ? true : false,
-					dec: months.includes('dec') ? true : false,
-				},
-				d_days: days.toString(),
-				days: allDays,
-				duration: duration.toString(),
-				exclusions: exclusions.split(';'),
-				hotels: hotels.split(';'),
-				inclusions: inclusions.split(';'),
-				name: name.toString(),
-				price: parseInt(price),
-				slug: slugify(name, { lower: true }).toString(),
-				src: imgUrl,
-				tags: tags.split(';'),
-			};
-			await setDoc(doc(db, 'data', name), data, { merge: true });
-			snapshot.forEach((doc) => {
-				console.log(doc.data());
-			});
-		} catch (error) {
-			alert(error.message);
+			toast.error(error.message);
 		}
 	};
 
@@ -157,12 +127,35 @@ const HomePage = () => {
 				/>
 
 				<ImageUploader
+					onFileRemoved={() => {
+						toast.success('Picture removed successfully!');
+					}}
 					onFileAdded={(picture) => {
-						setImgFile(picture.file);
-						setImageName(picture.file.name);
-
-						console.log(imgFile);
-						console.log(imgName);
+						uploadBytes(
+							ref(
+								storage,
+								`images/${slugify(
+									name +
+										'.' +
+										picture.file.name.split('.')[1],
+									{
+										lower: true,
+									}
+								)}`
+							),
+							picture.file
+						)
+							.then((snapshot) => {
+								return getDownloadURL(snapshot.ref);
+							})
+							.then((url) => {
+								setImgUrl(url);
+							});
+						if (!imgUrl) {
+							toast.error('Please upload the picture again!');
+						} else {
+							toast.success('Picture uploaded successfully!');
+						}
 					}}
 					style={{
 						height: 'auto',
