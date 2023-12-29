@@ -71,7 +71,7 @@ const DestCard = ({
 			{inclusions &&
 				inclusions.map((item) => (
 					<div key={item}>
-						<p className="text-white text-left">• {item}</p>
+						<p className="text-text text-left">• {item}</p>
 					</div>
 				))}
 
@@ -82,7 +82,7 @@ const DestCard = ({
 			)}
 			{exclusions &&
 				exclusions.map((item) => (
-					<p className="text-white text-left">• {item}</p>
+					<p className="text-text text-left">• {item}</p>
 				))}
 
 			{hotels && (
@@ -96,7 +96,7 @@ const DestCard = ({
 			</h1>
 			{tags.length !== 0 &&
 				tags.map((item) => (
-					<p className="text-white text-left">• {item}</p>
+					<p className="text-text text-left">• {item}</p>
 				))}
 
 			<h1 className="text-xl text-center font-extrabold mt-5 uppercase">
@@ -104,12 +104,12 @@ const DestCard = ({
 			</h1>
 			{activities.length !== 0 &&
 				activities.forEach((item) => (
-					<p className="text-white text-left">• {item}</p>
+					<p className="text-text text-left">• {item}</p>
 				))}
 
 			{hotels &&
 				hotels.forEach((item) => (
-					<p className="text-white text-left">• {item}</p>
+					<p className="text-text text-left">• {item}</p>
 				))}
 
 			{(jan ||
