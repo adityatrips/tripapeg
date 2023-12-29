@@ -79,10 +79,10 @@ const PlaceSlug = () => {
 						data.days.map((day) => (
 							<div key={day.day}>
 								<h1 className="text-xl font-extrabold">
-									Day {day.day} ({day.title})
+									Day {day.dayNumber} ({day.dayTitle})
 								</h1>
 								<p className="text-justify mb-5">
-									&nbsp;&nbsp;&nbsp;{day.desc}
+									&nbsp;&nbsp;&nbsp;{day.dayDescription}
 								</p>
 							</div>
 						))}
