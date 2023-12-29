@@ -33,7 +33,7 @@ const DestCard = ({
 			<div className="title mb-4 overflow-hidden">
 				<img
 					src={src}
-					alt="Dubai"
+					alt={title}
 					className="card-img"
 				/>
 			</div>

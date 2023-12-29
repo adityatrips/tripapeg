@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Accordion from './../components/Accordion';
 import DestCard from './../components/DestCard';
-import { notes, cancellation, data } from '../data';
 import ContactForm from './../components/ContactForm';
 import { collection, getDocs, limit, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const PlaceSlug = () => {
+	const [cancellation, setCancellation] = useState([]);
+	const [notes, setNotes] = useState([]);
+
 	const { id } = useParams();
 
 	const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +17,7 @@ const PlaceSlug = () => {
 
 	const getDeal = async () => {
 		const dataRef = collection(db, 'data');
+
 		const dataSnap = await getDocs(
 			query(dataRef, where('slug', '==', id), limit(1))
 		);
@@ -23,8 +26,23 @@ const PlaceSlug = () => {
 		setIsLoading(false);
 	};
 
+	const getInfo = async () => {
+		const cRef = collection(db, 'cancellation');
+		const nRef = collection(db, 'note');
+		const dataSnapC = await getDocs(cRef);
+		const dataSnapN = await getDocs(nRef);
+
+		dataSnapC.docs.map((doc) =>
+			setCancellation((prev) => [...prev, doc.data().cancellationDesc])
+		);
+		dataSnapN.docs.map((doc) =>
+			setNotes((prev) => [...prev, doc.data().noteDesc])
+		);
+	};
+
 	useEffect(() => {
 		getDeal();
+		getInfo();
 	}, []);
 
 	return isLoading ? (
