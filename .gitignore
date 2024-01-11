@@ -26,3 +26,5 @@ node_modules
 /.firebaserc
 /firebase.json
 src/data.js
+
+tripapeg-admin/
