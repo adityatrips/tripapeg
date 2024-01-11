@@ -2,12 +2,12 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-	apiKey: 'AIzaSyAXTygJensZK1ayGj0DNY5opyEqhzXKhv8',
-	authDomain: 'trip-a-peg.firebaseapp.com',
-	projectId: 'trip-a-peg',
-	storageBucket: 'trip-a-peg.appspot.com',
-	messagingSenderId: '54212365817',
-	appId: '1:54212365817:web:ff2dd01b1cdd3dba934128',
+	apiKey: 'AIzaSyCjyMZQilbKlBYzNMiZJKuANvq2yjlt520',
+	authDomain: 'tripapeg-website.firebaseapp.com',
+	projectId: 'tripapeg-website',
+	storageBucket: 'tripapeg-website.appspot.com',
+	messagingSenderId: '408956286590',
+	appId: '1:408956286590:web:0ac4a0e569f7715335ca2f',
 };
 
 const fb = initializeApp(firebaseConfig);
