@@ -69,7 +69,7 @@ const DestCard = ({
 			{inclusions &&
 				inclusions.map((item) => (
 					<div key={item}>
-						<p className="text-white text-left">• {item}</p>
+						<p className="text-text text-left">• {item}</p>
 					</div>
 				))}
 
@@ -80,7 +80,12 @@ const DestCard = ({
 			)}
 			{exclusions &&
 				exclusions.map((item) => (
-					<p className="text-white text-left">• {item}</p>
+					<p
+						key={item}
+						className="text-text text-left"
+					>
+						• {item}
+					</p>
 				))}
 
 			{hotels && (
@@ -90,7 +95,12 @@ const DestCard = ({
 			)}
 			{hotels &&
 				hotels.map((item) => (
-					<p className="text-white text-left">• {item}</p>
+					<p
+						key={item}
+						className="text-text text-left"
+					>
+						• {item}
+					</p>
 				))}
 
 			{(jan ||
@@ -194,9 +204,7 @@ const DestCard = ({
 
 			{action && (
 				<Link to={link}>
-					<button className="rounded-md btn btn-p w-full">
-						Learn More...
-					</button>
+					<button className="rounded-md btn btn-p w-full">Learn More...</button>
 				</Link>
 			)}
 		</div>

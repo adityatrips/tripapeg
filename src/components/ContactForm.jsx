@@ -85,9 +85,7 @@ const ContactForm = ({ tripName = '', isInTripPage = true }) => {
 			{isInTripPage && (
 				<label>
 					Trip Name:&nbsp;
-					<span className="font-bold uppercase text-secondary">
-						{tripName}
-					</span>
+					<span className="font-bold uppercase text-secondary">{tripName}</span>
 				</label>
 			)}
 			<button

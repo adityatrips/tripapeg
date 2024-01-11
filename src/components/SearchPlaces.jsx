@@ -48,19 +48,16 @@ const activitiesOpts = [
 
 const SearchPlaces = ({ dest }) => {
 	const [tripTypeOpt, setTripTypeOpt] = useState(['Domestic']);
-	const [destinationOpt, setDestinationOpt] = useState([
-		'Andaman and Nicobar',
-	]);
+	const [destinationOpt, setDestinationOpt] = useState(['Andaman and Nicobar']);
 	const [activitiesOpt, setActivitiesOpt] = useState(['Camping']);
 	const [search, setSearch] = useState([]);
 
 	const handleSearch = () => {
-		let results = [];
 		setSearch([]);
+		let results = [];
 		for (let item of dest) {
 			for (let i of tripTypeOpt) {
-				item.tags.includes(i.toLowerCase().trim()) &&
-					results.push(item);
+				item.tags.includes(i.toLowerCase().trim()) && results.push(item);
 			}
 			for (let i of destinationOpt) {
 				if (item.name.toLowerCase().trim() === i.toLowerCase().trim()) {
@@ -69,13 +66,13 @@ const SearchPlaces = ({ dest }) => {
 			}
 			for (let item of dest) {
 				for (let i of activitiesOpt) {
-					item.activities.includes(i.toLowerCase()) &&
-						results.push(item);
+					item.activities.includes(i.toLowerCase()) && results.push(item);
 				}
 			}
 		}
 		let searchSet = new Set(results);
 		setSearch(Array.from(searchSet));
+		console.log(searchSet);
 	};
 
 	return (

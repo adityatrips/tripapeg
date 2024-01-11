@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Card from '../components/Card';
-import { collection, getDocs, limit, query } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const TripsPage = () => {
@@ -8,7 +8,7 @@ const TripsPage = () => {
 	const [isLoading, setIsLoading] = useState(true);
 
 	const getDeals = async () => {
-		const dataRef = collection(db, 'data');
+		const dataRef = collection(db, 'destinations');
 		const dataSnap = await getDocs(dataRef);
 
 		let tmpData = [];
@@ -29,6 +29,7 @@ const TripsPage = () => {
 		return (
 			<div className="mt-5 grid gap-2 grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
 				{data.map((d) => {
+					console.log(d);
 					return (
 						<Card
 							key={d.slug}

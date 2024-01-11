@@ -15,10 +15,10 @@ import {
 import { db } from './../firebase';
 
 const HomePage = () => {
-	const [dests, setDests] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [cruiseData, setCruiseData] = useState([]);
 	const [dealsData, setDealsData] = useState([]);
+	const [dests, setDests] = useState([]);
 
 	const getCruiseDeals = async () => {
 		const dataRef = collection(db, 'cruise');
@@ -33,15 +33,24 @@ const HomePage = () => {
 		setCruiseData(tmpData);
 	};
 
+	const getAllDeals = async () => {
+		const dataRef = collection(db, 'destinations');
+		const dataSnap = await getDocs(dataRef);
+
+		let tmpData = [];
+
+		dataSnap.forEach((doc) => {
+			tmpData.push(doc.data());
+		});
+
+		setDests(tmpData);
+	};
+
 	const getDeals = async () => {
-		const dataRef = collection(db, 'data');
+		const dataRef = collection(db, 'destinations');
 		const dataSnap = await getDocs(
 			query(dataRef, where('tags', 'array-contains', 'featured'))
 		);
-
-		dataSnap.forEach((doc) => {
-			console.log(doc.data());
-		});
 
 		let tmpData = [];
 
@@ -56,6 +65,7 @@ const HomePage = () => {
 		const getData = async () => {
 			await getCruiseDeals();
 			await getDeals();
+			await getAllDeals();
 
 			return;
 		};
@@ -69,7 +79,7 @@ const HomePage = () => {
 	) : (
 		<div className="w-full">
 			<Carousel />
-			<SearchPlaces dest={dests} />
+			<SearchPlaces dest={dealsData} />
 			<Information />
 			<div>
 				<h1 className="text-2xl md:text-4xl text-center uppercase font-bold my-10">

@@ -6,9 +6,29 @@ import TripsPage from './pages/TripsPage';
 import PlacesSlug from './pages/PlaceSlug';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import axios from 'axios';
+
+import { db } from './firebase';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import { notes } from './data';
 
 const App = () => {
+	useEffect(() => {
+		const docRef = collection(db, `notes`);
+		let addData = async () => {
+			try {
+				for (let i = 0; i < notes.length; i++) {
+					const ref = doc(docRef, `${i}`);
+
+					await setDoc(ref, {
+						desc: notes[i],
+					});
+				}
+			} catch (e) {
+				console.error(e);
+			}
+		};
+		addData();
+	}, []);
 	return (
 		<BrowserRouter>
 			<Navbar />

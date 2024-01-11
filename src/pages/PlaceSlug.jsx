@@ -16,7 +16,7 @@ const PlaceSlug = () => {
 	const [data, setData] = useState({});
 
 	const getDeal = async () => {
-		const dataRef = collection(db, 'data');
+		const dataRef = collection(db, 'destinations');
 
 		const dataSnap = await getDocs(
 			query(dataRef, where('slug', '==', id), limit(1))
@@ -28,16 +28,14 @@ const PlaceSlug = () => {
 
 	const getInfo = async () => {
 		const cRef = collection(db, 'cancellation');
-		const nRef = collection(db, 'note');
+		const nRef = collection(db, 'notes');
 		const dataSnapC = await getDocs(cRef);
 		const dataSnapN = await getDocs(nRef);
 
 		dataSnapC.docs.map((doc) =>
-			setCancellation((prev) => [...prev, doc.data().cancellationDesc])
+			setCancellation((prev) => [...prev, doc.data().desc])
 		);
-		dataSnapN.docs.map((doc) =>
-			setNotes((prev) => [...prev, doc.data().noteDesc])
-		);
+		dataSnapN.docs.map((doc) => setNotes((prev) => [...prev, doc.data().desc]));
 	};
 
 	useEffect(() => {
@@ -76,16 +74,19 @@ const PlaceSlug = () => {
 				</Accordion>
 				<Accordion heading="Itinerary">
 					{data &&
-						data.days.map((day) => (
-							<div key={day.day}>
-								<h1 className="text-xl font-extrabold">
-									Day {day.dayNumber} ({day.dayTitle})
-								</h1>
-								<p className="text-justify mb-5">
-									&nbsp;&nbsp;&nbsp;{day.dayDescription}
-								</p>
-							</div>
-						))}
+						data.days.map((day) => {
+							console.log(day);
+							return (
+								<div key={day.day}>
+									<h1 className="text-xl font-extrabold">
+										Day {day.day} ({day.title})
+									</h1>
+									<p className="text-justify mb-5">
+										&nbsp;&nbsp;&nbsp;{day.desc}
+									</p>
+								</div>
+							);
+						})}
 				</Accordion>
 			</ul>
 
